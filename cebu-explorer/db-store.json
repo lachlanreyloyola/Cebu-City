@@ -1,0 +1,42 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Cebu Admin",
+      "email": "admin@cebuexplorer.com",
+      "password": "AdminPassword123",
+      "role": "admin"
+    },
+    {
+      "id": 2,
+      "name": "Maria Santos",
+      "email": "user@cebuexplorer.com",
+      "password": "UserPassword123",
+      "role": "user"
+    }
+  ],
+  "bookings": [
+    {
+      "id": 1,
+      "userId": 2,
+      "destinationId": "kawasan-falls",
+      "bookingDate": "2026-06-29",
+      "timeSlot": "08:00 AM - 12:00 PM",
+      "guestCount": 3,
+      "specialRequests": "Requesting local canyoneering guide registration.",
+      "status": "approved",
+      "createdAt": "2026-06-24T18:48:07.758Z"
+    },
+    {
+      "id": 2,
+      "userId": 2,
+      "destinationId": "osmena-peak",
+      "bookingDate": "2026-07-04",
+      "timeSlot": "05:00 AM - 08:00 AM",
+      "guestCount": 2,
+      "specialRequests": "Sunrise camping hike preferences.",
+      "status": "pending",
+      "createdAt": "2026-06-24T18:48:07.758Z"
+    }
+  ]
+}

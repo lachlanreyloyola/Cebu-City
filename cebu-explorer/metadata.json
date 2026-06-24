@@ -1,0 +1,6 @@
+{
+  "name": "Cebu Explorer",
+  "description": "A full-stack travel booking and adventure planning platform for Cebu City featuring user authentication, booking management (CRUD), and an admin dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
