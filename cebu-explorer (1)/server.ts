@@ -1,6 +1,6 @@
 import express from 'express';
-import fs from 'fs';
 import path from 'path';
+import fs from 'fs';
 import { createServer as createViteServer } from 'vite';
 
 const app = express();
@@ -9,6 +9,7 @@ const DB_FILE = path.join(process.cwd(), 'db-store.json');
 
 app.use(express.json());
 
+// Initialize database store file if not exists
 interface DbStore {
   users: any[];
   bookings: any[];
@@ -67,6 +68,11 @@ function writeDb(data: DbStore) {
   }
 }
 
+// --------------------------------------------------
+// API ENDPOINTS - Authentication
+// --------------------------------------------------
+
+// Register API
 app.post('/api/auth/register', (req, res) => {
   const { name, email, password } = req.body;
   
@@ -84,17 +90,19 @@ app.post('/api/auth/register', (req, res) => {
     id: db.users.length ? Math.max(...db.users.map(u => u.id)) + 1 : 1,
     name,
     email,
-    password,
+    password, // Simulated hashing for local dev preview ease
     role: 'user'
   };
 
   db.users.push(newUser);
   writeDb(db);
 
+  // Return user without password
   const { password: _, ...userResponse } = newUser;
   res.status(201).json({ success: true, user: userResponse });
 });
 
+// Login API
 app.post('/api/auth/login', (req, res) => {
   const { email, password } = req.body;
 
@@ -113,6 +121,11 @@ app.post('/api/auth/login', (req, res) => {
   res.json({ success: true, user: userResponse });
 });
 
+// --------------------------------------------------
+// API ENDPOINTS - Bookings CRUD
+// --------------------------------------------------
+
+// List user bookings (Read)
 app.get('/api/bookings', (req, res) => {
   const userId = req.query.userId ? parseInt(req.query.userId as string) : null;
   const role = req.query.role as string;
@@ -123,6 +136,7 @@ app.get('/api/bookings', (req, res) => {
 
   const db = readDb();
   
+  // Admins see all bookings, regular users see their own
   let bookings = db.bookings;
   if (role !== 'admin') {
     bookings = db.bookings.filter(b => b.userId === userId);
@@ -131,6 +145,7 @@ app.get('/api/bookings', (req, res) => {
   res.json({ bookings });
 });
 
+// Create booking (Create)
 app.post('/api/bookings', (req, res) => {
   const { userId, destinationId, bookingDate, timeSlot, guestCount, specialRequests } = req.body;
 
@@ -157,6 +172,7 @@ app.post('/api/bookings', (req, res) => {
   res.status(201).json({ success: true, booking: newBooking });
 });
 
+// Update booking (Update)
 app.put('/api/bookings/:id', (req, res) => {
   const bookingId = parseInt(req.params.id);
   const { bookingDate, timeSlot, guestCount, specialRequests, userId } = req.body;
@@ -172,6 +188,7 @@ app.put('/api/bookings/:id', (req, res) => {
     return res.status(404).json({ error: 'Booking not found.' });
   }
 
+  // Verify ownership or admin privileges
   if (db.bookings[index].userId !== parseInt(userId)) {
     return res.status(403).json({ error: 'Permission denied.' });
   }
@@ -182,13 +199,14 @@ app.put('/api/bookings/:id', (req, res) => {
     timeSlot,
     guestCount: parseInt(guestCount),
     specialRequests: specialRequests || '',
-    status: 'pending'
+    status: 'pending' // Revert to pending for administrative review after editing
   };
 
   writeDb(db);
   res.json({ success: true, booking: db.bookings[index] });
 });
 
+// Delete booking (Delete)
 app.delete('/api/bookings/:id', (req, res) => {
   const bookingId = parseInt(req.params.id);
   const userId = parseInt(req.query.userId as string);
@@ -204,6 +222,7 @@ app.delete('/api/bookings/:id', (req, res) => {
     return res.status(404).json({ error: 'Booking not found.' });
   }
 
+  // Verify ownership
   if (db.bookings[index].userId !== userId) {
     return res.status(403).json({ error: 'Permission denied.' });
   }
@@ -214,6 +233,11 @@ app.delete('/api/bookings/:id', (req, res) => {
   res.json({ success: true });
 });
 
+// --------------------------------------------------
+// API ENDPOINTS - Admin control (Approve/Reject)
+// --------------------------------------------------
+
+// Update status
 app.post('/api/admin/bookings/:id/status', (req, res) => {
   const bookingId = parseInt(req.params.id);
   const { status, adminId } = req.body;
@@ -234,12 +258,13 @@ app.post('/api/admin/bookings/:id/status', (req, res) => {
     return res.status(404).json({ error: 'Booking not found.' });
   }
 
-  db.bookings[index].status = status;
+  db.bookings[index].status = status; // 'approved' or 'rejected'
   writeDb(db);
 
   res.json({ success: true, booking: db.bookings[index] });
 });
 
+// Get global system statistics
 app.get('/api/stats', (req, res) => {
   const db = readDb();
   const totalUsers = db.users.length;
@@ -256,6 +281,9 @@ app.get('/api/stats', (req, res) => {
   });
 });
 
+// --------------------------------------------------
+// VITE DEV SERVER AND STATIC ASSETS INTEGRATION
+// --------------------------------------------------
 
 async function bootstrap() {
   if (process.env.NODE_ENV !== 'production') {

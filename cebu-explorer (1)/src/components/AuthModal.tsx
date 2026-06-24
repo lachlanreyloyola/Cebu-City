@@ -19,7 +19,6 @@ export default function AuthModal({ onSuccess, onClose }: AuthModalProps) {
     e.preventDefault();
     setError('');
 
-    // Client-side validations
     const trimmedEmail = email.trim();
     if (!trimmedEmail || !password) {
       setError('Please fill in all required fields.');
@@ -68,7 +67,6 @@ export default function AuthModal({ onSuccess, onClose }: AuthModalProps) {
         throw new Error(data.error || 'Authentication failed. Please check credentials.');
       }
 
-      // Successfully authenticated
       onSuccess(data.user);
     } catch (err: any) {
       setError(err.message || 'Server connection failed.');
@@ -81,7 +79,6 @@ export default function AuthModal({ onSuccess, onClose }: AuthModalProps) {
     <div className="fixed inset-0 z-50 grid place-items-center bg-[#141414]/30 p-4">
       <div className="bg-white max-w-[400px] w-full border border-[#141414] p-6 shadow-[6px_6px_0px_#141414] relative rounded-none">
         
-        {/* Close Button */}
         <button 
           onClick={onClose}
           className="absolute right-3 top-3 text-[#141414] hover:opacity-75 font-bold text-lg cursor-pointer"
@@ -89,7 +86,6 @@ export default function AuthModal({ onSuccess, onClose }: AuthModalProps) {
           &times;
         </button>
 
-        {/* Brand Header */}
         <div className="flex items-center gap-2 justify-center mb-4 pb-3 border-b border-[#141414]">
           <span className="font-mono bg-[#141414] text-white px-2 py-0.5 border border-[#141414] text-[10px] uppercase font-bold tracking-wider">
             Cebu Explorer Terminal
@@ -100,7 +96,6 @@ export default function AuthModal({ onSuccess, onClose }: AuthModalProps) {
           {isLogin ? 'Welcome Back / Sign In' : 'Create System Account'}
         </h2>
 
-        {/* Error Alert bar */}
         {error && (
           <div className="flex items-start gap-2 bg-white border border-red-500 border-l-4 border-l-red-600 text-red-600 rounded-none p-3 text-xs mb-4 font-mono font-bold">
             <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
@@ -110,7 +105,6 @@ export default function AuthModal({ onSuccess, onClose }: AuthModalProps) {
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
           
-          {/* Full Name input for registration */}
           {!isLogin && (
             <div className="flex flex-col gap-1">
               <label className="text-[10px] font-bold uppercase tracking-wider text-[#141414] opacity-65">Full Name</label>
@@ -128,7 +122,6 @@ export default function AuthModal({ onSuccess, onClose }: AuthModalProps) {
             </div>
           )}
 
-          {/* Email Address input */}
           <div className="flex flex-col gap-1">
             <label className="text-[10px] font-bold uppercase tracking-wider text-[#141414] opacity-65">Email Address</label>
             <div className="relative">
@@ -144,7 +137,6 @@ export default function AuthModal({ onSuccess, onClose }: AuthModalProps) {
             </div>
           </div>
 
-          {/* Password input */}
           <div className="flex flex-col gap-1">
             <label className="text-[10px] font-bold uppercase tracking-wider text-[#141414] opacity-65">Password</label>
             <div className="relative">
@@ -160,7 +152,6 @@ export default function AuthModal({ onSuccess, onClose }: AuthModalProps) {
             </div>
           </div>
 
-          {/* Confirm password input for registration */}
           {!isLogin && (
             <div className="flex flex-col gap-1">
               <label className="text-[10px] font-bold uppercase tracking-wider text-[#141414] opacity-65">Confirm Password</label>

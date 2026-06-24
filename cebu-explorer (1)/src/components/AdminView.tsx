@@ -22,15 +22,12 @@ export default function AdminView({ user, onBackToDashboard }: AdminViewProps) {
   const [error, setError] = useState('');
   const [actionLoadingId, setActionLoadingId] = useState<number | null>(null);
 
-  // Sync admin records
   const loadAdminData = async () => {
     try {
       setError('');
-      // Load stats & users
       const statsResponse = await fetch('/api/stats');
       const statsData = await statsResponse.json();
 
-      // Load bookings
       const bookingsResponse = await fetch(`/api/bookings?userId=${user.id}&role=admin`);
       const bookingsData = await bookingsResponse.json();
 
@@ -51,7 +48,6 @@ export default function AdminView({ user, onBackToDashboard }: AdminViewProps) {
     loadAdminData();
   }, [user]);
 
-  // Handle Approve/Reject triggers (UPDATE CRUD state)
   const handleUpdateStatus = async (bookingId: number, status: 'approved' | 'rejected') => {
     setActionLoadingId(bookingId);
     try {
@@ -70,10 +66,8 @@ export default function AdminView({ user, onBackToDashboard }: AdminViewProps) {
         throw new Error(data.error || 'Status transition failed.');
       }
 
-      // Sync booking in state
       setBookings(bookings.map(b => b.id === bookingId ? { ...b, status } : b));
       
-      // Re-trigger counter updates
       if (stats) {
         const isApproved = status === 'approved';
         setStats({
@@ -93,7 +87,6 @@ export default function AdminView({ user, onBackToDashboard }: AdminViewProps) {
     <div className="min-h-screen bg-[#E4E3E0] py-8 px-[4%]">
       <div className="max-w-[1200px] mx-auto">
         
-        {/* Navigation back and title */}
         <div className="flex justify-between items-center mb-8 flex-wrap gap-4">
           <div className="flex items-center gap-3">
             <button 
@@ -132,7 +125,6 @@ export default function AdminView({ user, onBackToDashboard }: AdminViewProps) {
           <div className="text-center py-20 text-[#141414] font-mono text-xs">Synchronizing administrative databases...</div>
         ) : (
           <>
-            {/* KPI Metrics row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
               <div className="bg-white rounded-none p-5 border border-[#141414] text-center">
                 <div className="text-2xl font-bold font-mono text-[#141414]">{stats?.totalUsers || 0}</div>
@@ -152,7 +144,6 @@ export default function AdminView({ user, onBackToDashboard }: AdminViewProps) {
               </div>
             </div>
 
-            {/* Global Bookings Moderation section */}
             <h2 className="font-serif italic font-bold text-lg text-[#141414] mb-4 pb-1.5 border-b border-[#141414]">
               Manage Global Bookings
             </h2>
@@ -237,7 +228,6 @@ export default function AdminView({ user, onBackToDashboard }: AdminViewProps) {
               </div>
             </div>
 
-            {/* Users Accounts registry */}
             <h2 className="font-serif italic font-bold text-lg text-[#141414] mb-4 pb-1.5 border-b border-[#141414]">
               System Account Directory
             </h2>

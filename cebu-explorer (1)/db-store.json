@@ -13,6 +13,13 @@
       "email": "user@cebuexplorer.com",
       "password": "UserPassword123",
       "role": "user"
+    },
+    {
+      "id": 3,
+      "name": "Lachlan",
+      "email": "lachlanpogi@cebuexplorer.com",
+      "password": "aquarius02142004",
+      "role": "user"
     }
   ],
   "bookings": [
@@ -25,7 +32,7 @@
       "guestCount": 3,
       "specialRequests": "Requesting local canyoneering guide registration.",
       "status": "approved",
-      "createdAt": "2026-06-24T18:48:07.758Z"
+      "createdAt": "2026-06-24T20:55:28.660Z"
     },
     {
       "id": 2,
@@ -35,8 +42,30 @@
       "timeSlot": "05:00 AM - 08:00 AM",
       "guestCount": 2,
       "specialRequests": "Sunrise camping hike preferences.",
+      "status": "approved",
+      "createdAt": "2026-06-24T20:55:28.660Z"
+    },
+    {
+      "id": 3,
+      "userId": 2,
+      "destinationId": "sumilon-island",
+      "bookingDate": "2026-07-09",
+      "timeSlot": "08:00 AM - 12:00 PM",
+      "guestCount": 11,
+      "specialRequests": "marami akong pera kaya gusto kong gumala",
       "status": "pending",
-      "createdAt": "2026-06-24T18:48:07.758Z"
+      "createdAt": "2026-06-24T21:33:17.438Z"
+    },
+    {
+      "id": 4,
+      "userId": 3,
+      "destinationId": "san-remigio-beach",
+      "bookingDate": "2026-07-04",
+      "timeSlot": "01:00 PM - 05:00 PM",
+      "guestCount": 4,
+      "specialRequests": "wala lang",
+      "status": "pending",
+      "createdAt": "2026-06-24T21:34:43.391Z"
     }
   ]
 }

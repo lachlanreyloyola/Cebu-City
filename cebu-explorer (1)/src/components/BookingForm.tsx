@@ -18,7 +18,6 @@ export default function BookingForm({ userId, selectedDestinationId, onBookingAd
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Set selected destination if triggered from landing page card click
   useEffect(() => {
     if (selectedDestinationId) {
       setDestinationId(selectedDestinationId);
@@ -78,7 +77,6 @@ export default function BookingForm({ userId, selectedDestinationId, onBookingAd
         Book a New Adventure
       </h2>
 
-      {/* Success alert */}
       {success && (
         <div className="flex items-start gap-2 bg-[#ebfbeb] border border-green-200 text-[#1f6f4a] rounded-xl p-3.5 text-[13px] mb-5 font-semibold">
           <CheckCircle className="w-4.5 h-4.5 shrink-0 text-green-600 mt-0.5" />
@@ -86,7 +84,6 @@ export default function BookingForm({ userId, selectedDestinationId, onBookingAd
         </div>
       )}
 
-      {/* Error alert */}
       {error && (
         <div className="flex items-start gap-2 bg-[#ffebeb] border border-red-200 text-[#ff6f61] rounded-xl p-3.5 text-[13px] mb-5 font-semibold">
           <AlertCircle className="w-4.5 h-4.5 shrink-0 mt-0.5" />
@@ -96,7 +93,6 @@ export default function BookingForm({ userId, selectedDestinationId, onBookingAd
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         
-        {/* Destination drop-down selection */}
         <div className="flex flex-col gap-1.5">
           <label className="text-[13px] font-semibold text-[#0c2230]">Select Destination</label>
           <select 
@@ -114,7 +110,6 @@ export default function BookingForm({ userId, selectedDestinationId, onBookingAd
           </select>
         </div>
 
-        {/* Booking date selector */}
         <div className="flex flex-col gap-1.5">
           <label className="text-[13px] font-semibold text-[#0c2230]">Preferred Date</label>
           <div className="relative">
@@ -130,7 +125,6 @@ export default function BookingForm({ userId, selectedDestinationId, onBookingAd
           </div>
         </div>
 
-        {/* Time slot selector */}
         <div className="flex flex-col gap-1.5">
           <label className="text-[13px] font-semibold text-[#0c2230]">Preferred Time Slot</label>
           <div className="relative">
@@ -149,7 +143,6 @@ export default function BookingForm({ userId, selectedDestinationId, onBookingAd
           </div>
         </div>
 
-        {/* Guest count input */}
         <div className="flex flex-col gap-1.5">
           <label className="text-[13px] font-semibold text-[#0c2230]">Number of Travelers</label>
           <div className="relative">
@@ -166,7 +159,6 @@ export default function BookingForm({ userId, selectedDestinationId, onBookingAd
           </div>
         </div>
 
-        {/* Special instructions textarea */}
         <div className="flex flex-col gap-1.5">
           <label className="text-[13px] font-semibold text-[#0c2230]">Special Instructions / Requests</label>
           <div className="relative">

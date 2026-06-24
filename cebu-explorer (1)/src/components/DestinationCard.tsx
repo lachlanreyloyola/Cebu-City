@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Destination } from '../data/destinations';
 import { Star, MapPin, ChevronDown } from 'lucide-react';
+import { resolveImageUrl } from '../utils/imageHelper';
 
 interface DestinationCardProps {
   destination: Destination;
@@ -19,13 +20,12 @@ export default function DestinationCard({ destination, onBook, isHighlighted }: 
         isHighlighted ? 'ring-4 ring-[#f6b042] animate-pulse z-10' : ''
       }`}
     >
-      {/* Card Image and Badge */}
       <div className="relative aspect-video overflow-hidden bg-[#ead9b8]">
         <span className="absolute top-3.5 left-3.5 z-10 px-3 py-1.5 rounded-full text-[11px] font-semibold tracking-wider uppercase bg-white/92 backdrop-blur-sm text-[#063b54]">
           {destination.badge}
         </span>
         <img 
-          src={destination.imageUrl} 
+          src={resolveImageUrl(destination.imageUrl)} 
           alt={destination.name}
           className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
           referrerPolicy="no-referrer"
@@ -33,7 +33,6 @@ export default function DestinationCard({ destination, onBook, isHighlighted }: 
         <div className="absolute inset-0 bg-gradient-to-t from-[#063b54]/45 to-transparent"></div>
       </div>
 
-      {/* Card Content Body */}
       <div className="p-5.5 flex flex-col flex-1 gap-2.5">
         <div className="flex justify-between items-start gap-2">
           <h3 className="font-serif font-bold text-xl text-[#063b54] leading-tight">
@@ -45,7 +44,6 @@ export default function DestinationCard({ destination, onBook, isHighlighted }: 
           </div>
         </div>
 
-        {/* Location Links */}
         <div className="flex items-center gap-1.5 text-[#1aa3c4] text-[13px] font-medium">
           <MapPin className="w-3.5 h-3.5" />
           <a 
@@ -63,7 +61,6 @@ export default function DestinationCard({ destination, onBook, isHighlighted }: 
           {destination.description}
         </p>
 
-        {/* Collapsible Read More details */}
         <div className="mt-1.5">
           <div 
             className={`overflow-hidden transition-all duration-300 bg-gradient-to-br from-[#fffaf0] to-[#f6efe1] rounded-xl px-3.5 ${
@@ -86,13 +83,12 @@ export default function DestinationCard({ destination, onBook, isHighlighted }: 
           </button>
         </div>
 
-        {/* Dynamic Reservation CTA */}
         <button 
           type="button"
           onClick={() => onBook(destination.id)}
           className="mt-4 w-full bg-gradient-to-r from-[#0a6b8a] to-[#1aa3c4] text-white py-2.5 rounded-xl font-semibold text-xs text-center transition-all duration-300 hover:shadow-md hover:brightness-105 cursor-pointer"
         >
-          Book Travel Reservation →
+          Book Travel Reservation &rarr;
         </button>
       </div>
     </article>

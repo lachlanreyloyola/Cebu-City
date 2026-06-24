@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { DESTINATIONS } from '../data/destinations';
 import BookingForm from './BookingForm';
+import { resolveImageUrl } from '../utils/imageHelper';
 import { Calendar, Clock, Users, Edit3, Trash2, Shield, CalendarCheck } from 'lucide-react';
 
 interface Booking {
@@ -28,7 +29,6 @@ export default function DashboardView({ user, selectedDestinationId, onSelectDes
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   
-  // States for updating a booking
   const [editBooking, setEditBooking] = useState<Booking | null>(null);
   const [editDate, setEditDate] = useState('');
   const [editTime, setEditTime] = useState('');
@@ -37,7 +37,6 @@ export default function DashboardView({ user, selectedDestinationId, onSelectDes
   const [editError, setEditError] = useState('');
   const [editLoading, setEditLoading] = useState(false);
 
-  // Fetch bookings for this user
   const fetchBookings = async () => {
     try {
       const response = await fetch(`/api/bookings?userId=${user.id}&role=${user.role}`);
@@ -57,7 +56,6 @@ export default function DashboardView({ user, selectedDestinationId, onSelectDes
     fetchBookings();
   }, [user]);
 
-  // Handle booking cancelation (DELETE CRUD)
   const handleCancelBooking = async (bookingId: number) => {
     const confirmCancel = window.confirm('Are you sure you want to cancel this booking reservation?');
     if (!confirmCancel) return;
@@ -79,7 +77,6 @@ export default function DashboardView({ user, selectedDestinationId, onSelectDes
     }
   };
 
-  // Open Edit Dialog
   const openEditModal = (booking: Booking) => {
     setEditBooking(booking);
     setEditDate(booking.bookingDate);
@@ -93,7 +90,6 @@ export default function DashboardView({ user, selectedDestinationId, onSelectDes
     setEditBooking(null);
   };
 
-  // Handle booking update save (UPDATE CRUD)
   const handleSaveUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editBooking) return;
@@ -134,7 +130,6 @@ export default function DashboardView({ user, selectedDestinationId, onSelectDes
   return (
     <div className="min-h-screen bg-[#fdfaf3] pb-12">
       
-      {/* Dashboard Sub Header */}
       <div className="bg-white border-b border-[rgba(6,59,84,0.08)] py-4.5 px-[4%] flex justify-between items-center flex-wrap gap-4 sticky top-14 z-40">
         <div className="flex items-center gap-2">
           <span className="font-semibold text-sm text-[#5b6b76]">
@@ -165,19 +160,17 @@ export default function DashboardView({ user, selectedDestinationId, onSelectDes
 
       <div className="max-w-[1200px] mx-auto py-10 px-4 grid grid-cols-1 md:grid-cols-5 gap-8">
         
-        {/* Booking Form block (CREATE) */}
         <div className="md:col-span-2">
           <BookingForm 
             userId={user.id} 
             selectedDestinationId={selectedDestinationId} 
             onBookingAdded={() => {
               fetchBookings();
-              onSelectDestination(undefined); // Clear page selector
+              onSelectDestination(undefined);
             }}
           />
         </div>
 
-        {/* Bookings Feed block (READ, UPDATE, DELETE) */}
         <div className="md:col-span-3">
           <h2 className="font-serif font-bold text-xl text-[#063b54] mb-5 pb-2 border-b-2 border-[#f6efe1] flex items-center gap-2">
             <CalendarCheck className="w-5.5 h-5.5 text-[#0a6b8a]" />
@@ -190,7 +183,7 @@ export default function DashboardView({ user, selectedDestinationId, onSelectDes
             <div className="bg-red-50 text-[#ff6f61] p-4 rounded-xl text-sm font-medium">{error}</div>
           ) : bookings.length === 0 ? (
             <div className="bg-white rounded-2xl p-10 text-center border border-[rgba(6,59,84,0.06)] shadow-sm">
-              <span className="block text-3xl mb-3">🏖️</span>
+              <Calendar className="w-8 h-8 text-[#0a6b8a]/50 mx-auto mb-3" />
               <p className="text-sm font-medium text-[#063b54] mb-1">No active travel bookings found.</p>
               <p className="text-xs text-[#5b6b76]">Select an adventure from the left sidebar to book your first Cebu trip!</p>
             </div>
@@ -206,7 +199,7 @@ export default function DashboardView({ user, selectedDestinationId, onSelectDes
                     className="bg-white rounded-2xl border border-[rgba(6,59,84,0.06)] p-5.5 flex flex-col sm:flex-row gap-5 items-center shadow-sm hover:shadow-md transition-shadow"
                   >
                     <img 
-                      src={dest.imageUrl} 
+                      src={resolveImageUrl(dest.imageUrl)} 
                       alt={dest.name} 
                       className="w-24 h-24 rounded-xl object-cover shrink-0"
                       referrerPolicy="no-referrer"
@@ -222,9 +215,8 @@ export default function DashboardView({ user, selectedDestinationId, onSelectDes
                         </span>
                       </div>
                       
-                      <p className="text-[11px] text-[#0a6b8a] font-medium mb-3">📍 {dest.location}</p>
+                      <p className="text-[11px] text-[#0a6b8a] font-medium mb-3">Location: {dest.location}</p>
                       
-                      {/* Booking specifications */}
                       <div className="grid grid-cols-2 gap-2 text-[12px] text-[#5b6b76] mb-3.5">
                         <div className="flex items-center gap-1.5">
                           <Calendar className="w-3.5 h-3.5" />
@@ -240,10 +232,9 @@ export default function DashboardView({ user, selectedDestinationId, onSelectDes
                         </div>
                       </div>
 
-                      {/* Special instructions */}
                       {b.specialRequests && (
                         <div className="text-[11px] bg-[#fdfaf3] text-[#5b6b76] p-2.5 rounded-lg border-l-2 border-[#1aa3c4] italic mb-4">
-                          💬 "{b.specialRequests}"
+                          "{b.specialRequests}"
                         </div>
                       )}
 
@@ -273,7 +264,6 @@ export default function DashboardView({ user, selectedDestinationId, onSelectDes
         </div>
       </div>
 
-      {/* UPDATE DIALOG POPUP */}
       {editBooking && (
         <div className="fixed inset-0 z-50 bg-[#063b54]/40 backdrop-blur-sm grid place-items-center p-4">
           <div className="bg-white rounded-2xl p-6.5 max-w-[450px] w-full border border-[rgba(6,59,84,0.08)] shadow-[0_25px_60px_rgba(6,59,84,0.22)] relative">

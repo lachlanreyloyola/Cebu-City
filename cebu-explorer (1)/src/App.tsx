@@ -4,19 +4,18 @@ import DestinationCard from './components/DestinationCard';
 import AuthModal from './components/AuthModal';
 import DashboardView from './components/DashboardView';
 import AdminView from './components/AdminView';
-import ExporterView from './components/ExporterView';
-import { Search, Compass, Shield, LogOut, Code, UserCheck, CalendarCheck2, Star, Sparkles, MapPin } from 'lucide-react';
+import { resolveImageUrl } from './utils/imageHelper';
+import { Search, Compass, Shield, LogOut, UserCheck, CalendarCheck2, Star, Sparkles, MapPin } from 'lucide-react';
 
 export default function App() {
   const [selectedTab, setSelectedTab] = useState<'falls' | 'islands' | 'beaches' | 'mountains' | 'attract'>('falls');
   const [searchQuery, setSearchQuery] = useState('');
   const [user, setUser] = useState<any>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [currentView, setCurrentView] = useState<'landing' | 'dashboard' | 'admin' | 'exporter'>('landing');
+  const [currentView, setCurrentView] = useState<'landing' | 'dashboard' | 'admin'>('landing');
   const [selectedDestinationId, setSelectedDestinationId] = useState<string | undefined>(undefined);
   const [highlightedCardId, setHighlightedCardId] = useState<string | null>(null);
 
-  // Restore session from localStorage on mount
   useEffect(() => {
     const saved = localStorage.getItem('cebu_user');
     if (saved) {
@@ -33,7 +32,6 @@ export default function App() {
     localStorage.setItem('cebu_user', JSON.stringify(userData));
     setShowAuthModal(false);
     
-    // Automatically route to appropriate board
     if (userData.role === 'admin') {
       setCurrentView('admin');
     } else {
@@ -47,7 +45,6 @@ export default function App() {
     setCurrentView('landing');
   };
 
-  // Filter destinations based on search query
   const filteredDestinations = DESTINATIONS.filter(dest => {
     const query = searchQuery.toLowerCase().trim();
     if (!query) return dest.category === selectedTab;
@@ -57,15 +54,13 @@ export default function App() {
            dest.description.toLowerCase().includes(query);
   });
 
-  // Handle Surprise Me selector (Dynamic adventure)
   const handleSurpriseMe = () => {
     setHighlightedCardId(null);
-    setSearchQuery(''); // Reset search
+    setSearchQuery('');
 
     const randomIndex = Math.floor(Math.random() * DESTINATIONS.length);
     const chosen = DESTINATIONS[randomIndex];
 
-    // Switch tab to matching category
     setSelectedTab(chosen.category);
 
     setTimeout(() => {
@@ -74,13 +69,11 @@ export default function App() {
         element.scrollIntoView({ behavior: 'smooth', block: 'center' });
         setHighlightedCardId(chosen.id);
         
-        // Remove highlight after animation flashes
         setTimeout(() => setHighlightedCardId(null), 2500);
       }
     }, 150);
   };
 
-  // Route to Booking form inside Dashboard
   const handleBookTrigger = (destinationId: string) => {
     if (!user) {
       setSelectedDestinationId(destinationId);
@@ -122,13 +115,6 @@ export default function App() {
             >
               About Cebu
             </button>
-            <button 
-              onClick={() => setCurrentView('exporter')} 
-              className={`flex items-center gap-1.5 cursor-pointer transition-colors ${currentView === 'exporter' ? 'text-[#1aa3c4] font-bold' : 'text-[#0a6b8a] hover:text-[#1aa3c4]'}`}
-            >
-              <Code className="w-4 h-4" />
-              <span>PHP Source Exporter</span>
-            </button>
           </nav>
 
           <div className="flex items-center gap-2.5">
@@ -160,7 +146,6 @@ export default function App() {
         </div>
       </header>
 
-      {/* RENDER VIEWS */}
       {currentView === 'dashboard' && user && (
         <DashboardView 
           user={user} 
@@ -178,25 +163,13 @@ export default function App() {
         />
       )}
 
-      {currentView === 'exporter' && (
-        <div className="max-w-[1200px] mx-auto py-12 px-[4%]">
-          <div className="flex items-center gap-2 mb-6 pb-2.5 border-b border-[rgba(6,59,84,0.08)]">
-            <Code className="w-5.5 h-5.5 text-[#0a6b8a]" />
-            <h1 className="font-serif font-bold text-2xl text-[#063b54]">Developer Workspace Center</h1>
-          </div>
-          <ExporterView />
-        </div>
-      )}
-
       {currentView === 'landing' && (
         <>
-          {/* Hero segment with beautiful background picture and overlays */}
           <section id="top" className="relative min-h-[90vh] text-center flex flex-col justify-center items-center px-4 overflow-hidden bg-[#063b54]">
             
-            {/* Background Image with Tint Overlay */}
             <div className="absolute inset-0 z-0">
               <img 
-                src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=1600&q=80" 
+                src={resolveImageUrl("C:\\Users\\mitra\\cebu\\cebu pics\\photo-1559592413-7cec4d0cae2b.jpg")} 
                 alt="Scenic Cebu background" 
                 className="w-full h-full object-cover brightness-95"
                 referrerPolicy="no-referrer"
@@ -204,10 +177,8 @@ export default function App() {
               <div className="absolute inset-0 bg-gradient-to-b from-[#063b54]/80 via-[#063b54]/60 to-[#fdfaf3]"></div>
             </div>
 
-            {/* Smooth transition curve at bottom of hero */}
             <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#fdfaf3] to-transparent z-10"></div>
 
-            {/* Mouse Scroll indicator */}
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 hidden md:block">
               <div className="w-6 h-10 border-2 border-white/40 rounded-full flex justify-center p-1">
                 <div className="w-1.5 h-2.5 bg-[#f6b042] rounded-full animate-bounce mt-1"></div>
@@ -223,7 +194,7 @@ export default function App() {
                 <span className="text-[#f6b042] font-semibold italic">Cebu City</span>
               </h1>
               <p className="text-sm md:text-base text-white/95 max-w-[620px] mx-auto mb-10 leading-relaxed font-sans">
-                Discover the breathtaking destinations, historical landmarks, and unforgettable experiences that Cebu City has to offer. Built on React and compiled into exportable dynamic PHP/MySQL databases.
+                Discover the breathtaking destinations, historical landmarks, and unforgettable experiences that Cebu City has to offer.
               </p>
               <div className="flex gap-4 justify-center flex-wrap">
                 <a 
@@ -242,7 +213,6 @@ export default function App() {
             </div>
           </section>
 
-          {/* Explore Segment with search/tabs */}
           <section id="explore" className="py-20 bg-[#fdfaf3]">
             <div className="max-w-[1200px] mx-auto px-[4%]">
               
@@ -251,8 +221,6 @@ export default function App() {
                 <h2 className="font-serif text-3xl text-[#063b54] font-bold leading-tight mb-3.5">Where will Cebu take you?</h2>
                 <p className="text-[#5b6b76] text-sm">Switch between categories and book your adventure.</p>
               </div>
-
-              {/* Dynamic Interactive search container */}
               <div className="max-w-[540px] mx-auto mb-12 flex flex-col gap-4 items-center">
                 <div className="w-full flex items-center gap-3 bg-white border border-[rgba(6,59,84,0.08)] px-4 py-3 rounded-2xl shadow-[0_4px_14px_rgba(6,59,84,0.04)] focus-within:border-[#0a6b8a] transition-all">
                   <Search className="w-4.5 h-4.5 text-[#0a6b8a]" />
@@ -276,7 +244,6 @@ export default function App() {
                 </button>
               </div>
 
-              {/* Tabs Selectors */}
               <div className="flex flex-wrap justify-center gap-2.5 mb-10">
                 <button 
                   onClick={() => { setSelectedTab('falls'); setSearchQuery(''); }}
@@ -286,7 +253,7 @@ export default function App() {
                       : 'bg-white border border-[rgba(6,59,84,0.08)] text-[#063b54] hover:bg-[#f6efe1]'
                   }`}
                 >
-                  ⛰️ Cebu Falls
+                  Cebu Falls
                 </button>
                 <button 
                   onClick={() => { setSelectedTab('islands'); setSearchQuery(''); }}
@@ -296,7 +263,7 @@ export default function App() {
                       : 'bg-white border border-[rgba(6,59,84,0.08)] text-[#063b54] hover:bg-[#f6efe1]'
                   }`}
                 >
-                  🏝️ Cebu Islands
+                  Cebu Islands
                 </button>
                 <button 
                   onClick={() => { setSelectedTab('beaches'); setSearchQuery(''); }}
@@ -306,7 +273,7 @@ export default function App() {
                       : 'bg-white border border-[rgba(6,59,84,0.08)] text-[#063b54] hover:bg-[#f6efe1]'
                   }`}
                 >
-                  🏖️ Cebu Beaches
+                  Cebu Beaches
                 </button>
                 <button 
                   onClick={() => { setSelectedTab('mountains'); setSearchQuery(''); }}
@@ -316,7 +283,7 @@ export default function App() {
                       : 'bg-white border border-[rgba(6,59,84,0.08)] text-[#063b54] hover:bg-[#f6efe1]'
                   }`}
                 >
-                  🧗 Hiking Mountains
+                  Hiking Mountains
                 </button>
                 <button 
                   onClick={() => { setSelectedTab('attract'); setSearchQuery(''); }}
@@ -326,11 +293,9 @@ export default function App() {
                       : 'bg-white border border-[rgba(6,59,84,0.08)] text-[#063b54] hover:bg-[#f6efe1]'
                   }`}
                 >
-                  🏛️ Other Attractions
+                  Other Attractions
                 </button>
               </div>
-
-              {/* Dynamic Destinations Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6.5">
                 {filteredDestinations.map(dest => (
                   <DestinationCard 
@@ -344,7 +309,7 @@ export default function App() {
 
               {filteredDestinations.length === 0 && (
                 <div className="text-center py-20 border border-dashed border-[rgba(6,59,84,0.15)] bg-white rounded-2xl shadow-sm">
-                  <span className="block text-3xl mb-2.5">🏖️</span>
+                  <Compass className="w-8 h-8 text-[#0a6b8a]/50 mx-auto mb-3" />
                   <p className="text-sm font-semibold text-[#063b54]">No matching destinations found.</p>
                   <p className="text-xs text-[#5b6b76] mt-1">Try another search keyword or switch categories above.</p>
                 </div>
@@ -352,13 +317,11 @@ export default function App() {
 
             </div>
           </section>
-
-          {/* About Cebu Section */}
           <section id="about" className="py-20 bg-white border-t border-[rgba(6,59,84,0.06)]">
             <div className="max-w-[1200px] mx-auto px-[4%] grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="relative rounded-2xl overflow-hidden aspect-[4/3] max-h-[360px] shadow-lg">
                 <img 
-                  src="https://images.unsplash.com/photo-1518156677180-95a2893f3e9f?w=800&q=80" 
+                  src={resolveImageUrl("C:\\Users\\mitra\\cebu\\cebu pics\\cebumap.jpg")} 
                   alt="Beautiful Cebu landscape" 
                   className="w-full h-full object-cover"
                 />
@@ -397,25 +360,11 @@ export default function App() {
             </div>
           </section>
 
-          {/* Developer Exporter segment at bottom of homepage */}
-          <section className="py-20 bg-[#fdfaf3] border-t border-[rgba(6,59,84,0.06)]">
-            <div className="max-w-[1200px] mx-auto px-[4%]">
-              <div className="text-center mb-8">
-                <span className="text-[#0a6b8a] text-[10px] uppercase tracking-wider font-bold mb-1.5 block">Downloadable PHP Files</span>
-                <h2 className="font-serif font-bold text-2xl text-[#063b54]">Full-Stack PHP & MySQL Resource Center</h2>
-                <p className="text-[#5b6b76] text-xs max-w-[600px] mx-auto mt-1.5">
-                  Need to host this on local htdocs, WAMP, or submit as an assignment? Copy and browse the complete, fully validated code files below.
-                </p>
-              </div>
-              <ExporterView />
-            </div>
-          </section>
         </>
       )}
 
-      {/* FOOTER */}
       <footer id="contact" className="bg-[#063b54] text-white py-14 border-t border-[rgba(6,59,84,0.08)]">
-        <div className="max-w-[1200px] mx-auto px-[4%] grid grid-cols-1 md:grid-cols-3 gap-10">
+        <div className="max-w-[1200px] mx-auto px-[4%] grid grid-cols-1 md:grid-cols-2 gap-10">
           <div>
             <h4 className="text-white font-serif font-bold text-lg mb-3">Cebu Explorer</h4>
             <p className="text-xs text-white/80 leading-relaxed max-w-[340px]">
@@ -430,28 +379,19 @@ export default function App() {
           <div>
             <h4 className="text-white font-serif font-bold text-lg mb-3">Explore Categories</h4>
             <ul className="flex flex-col gap-2 text-xs text-white/80">
-              <li><button onClick={() => { setCurrentView('landing'); setSelectedTab('falls'); }} className="hover:text-[#f6b042] transition-colors cursor-pointer text-left">⛰️ Cebu Waterfalls</button></li>
-              <li><button onClick={() => { setCurrentView('landing'); setSelectedTab('islands'); }} className="hover:text-[#f6b042] transition-colors cursor-pointer text-left">🏝️ Cebu Islands</button></li>
-              <li><button onClick={() => { setCurrentView('landing'); setSelectedTab('beaches'); }} className="hover:text-[#f6b042] transition-colors cursor-pointer text-left">🏖️ Cebu Beaches</button></li>
-              <li><button onClick={() => { setCurrentView('landing'); setSelectedTab('mountains'); }} className="hover:text-[#f6b042] transition-colors cursor-pointer text-left">🧗 Hiking Mountains</button></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-white font-serif font-bold text-lg mb-3">PHP Database Project</h4>
-            <ul className="flex flex-col gap-2 text-xs text-white/80">
-              <li><button onClick={() => setCurrentView('exporter')} className="hover:text-[#f6b042] transition-colors cursor-pointer text-left">🖥️ Exporter Center</button></li>
-              <li><a href="http://localhost/phpmyadmin" target="_blank" rel="noreferrer" className="hover:text-[#f6b042] transition-colors">PHPMyAdmin Dashboard</a></li>
-              <li><span className="text-green-300 font-medium">● Status: Ready for Production</span></li>
+              <li><button onClick={() => { setCurrentView('landing'); setSelectedTab('falls'); }} className="hover:text-[#f6b042] transition-colors cursor-pointer text-left">Cebu Waterfalls</button></li>
+              <li><button onClick={() => { setCurrentView('landing'); setSelectedTab('islands'); }} className="hover:text-[#f6b042] transition-colors cursor-pointer text-left">Cebu Islands</button></li>
+              <li><button onClick={() => { setCurrentView('landing'); setSelectedTab('beaches'); }} className="hover:text-[#f6b042] transition-colors cursor-pointer text-left">Cebu Beaches</button></li>
+              <li><button onClick={() => { setCurrentView('landing'); setSelectedTab('mountains'); }} className="hover:text-[#f6b042] transition-colors cursor-pointer text-left">Hiking Mountains</button></li>
             </ul>
           </div>
         </div>
         <div className="max-w-[1200px] mx-auto px-[4%] mt-12 pt-6 border-t border-white/10 flex justify-between flex-wrap gap-4 text-xs text-white/60">
           <span>&copy; {new Date().getFullYear()} Cebu Explorer. All rights reserved.</span>
-          <span>Made with 💙 in the Philippines</span>
+          <span>Made in the Philippines</span>
         </div>
       </footer>
 
-      {/* AUTHENTICATION MODAL DIALOG */}
       {showAuthModal && (
         <AuthModal 
           onSuccess={handleAuthSuccess}
